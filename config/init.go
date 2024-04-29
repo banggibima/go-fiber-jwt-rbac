@@ -8,6 +8,7 @@ type Config struct {
 	App      App
 	HTTP     HTTP
 	Postgres Postgres
+	Redis    Redis
 	JWT      JWT
 }
 
@@ -23,6 +24,12 @@ type HTTP struct {
 type Postgres struct {
 	Driver     string
 	Connection string
+}
+
+type Redis struct {
+	Addr     string
+	Password string
+	Database int
 }
 
 type JWT struct {
@@ -46,6 +53,11 @@ func Init(viper *viper.Viper) (*Config, error) {
 		Postgres: Postgres{
 			Driver:     viper.GetString("POSTGRES_DRIVER"),
 			Connection: viper.GetString("POSTGRES_CONNECTION"),
+		},
+		Redis: Redis{
+			Addr:     viper.GetString("REDIS_ADDR"),
+			Password: viper.GetString("REDIS_PASSWORD"),
+			Database: viper.GetInt("REDIS_DATABASE"),
 		},
 		JWT: JWT{
 			AccessSecret:  viper.GetString("JWT_ACCESS_SECRET"),
