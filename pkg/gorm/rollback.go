@@ -4,9 +4,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func Rollback(gormDB *gorm.DB, entities ...interface{}) error {
+func Rollback(tx *gorm.DB, entities ...interface{}) error {
 	for _, entity := range entities {
-		if err := DropTable(gormDB, entity); err != nil {
+		if err := DropTable(tx, entity); err != nil {
 			return err
 		}
 	}
@@ -14,10 +14,10 @@ func Rollback(gormDB *gorm.DB, entities ...interface{}) error {
 	return nil
 }
 
-func DropTable(gormDB *gorm.DB, entity interface{}) error {
-	exist := gormDB.Migrator().HasTable(entity)
+func DropTable(tx *gorm.DB, entity interface{}) error {
+	exist := tx.Migrator().HasTable(entity)
 	if exist {
-		if err := gormDB.Migrator().DropTable(entity); err != nil {
+		if err := tx.Migrator().DropTable(entity); err != nil {
 			return err
 		}
 	}
@@ -25,10 +25,10 @@ func DropTable(gormDB *gorm.DB, entity interface{}) error {
 	return nil
 }
 
-func DropColumn(gormDB *gorm.DB, entity interface{}, column string) error {
-	exist := gormDB.Migrator().HasColumn(entity, column)
+func DropColumn(tx *gorm.DB, entity interface{}, column string) error {
+	exist := tx.Migrator().HasColumn(entity, column)
 	if exist {
-		if err := gormDB.Migrator().DropColumn(entity, column); err != nil {
+		if err := tx.Migrator().DropColumn(entity, column); err != nil {
 			return err
 		}
 	}

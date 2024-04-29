@@ -4,9 +4,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func Migrate(gormDB *gorm.DB, entities ...interface{}) error {
+func Migrate(tx *gorm.DB, entities ...interface{}) error {
 	for _, entity := range entities {
-		if err := CreateTable(gormDB, entity); err != nil {
+		if err := CreateTable(tx, entity); err != nil {
 			return err
 		}
 	}
@@ -14,10 +14,10 @@ func Migrate(gormDB *gorm.DB, entities ...interface{}) error {
 	return nil
 }
 
-func CreateTable(gormDB *gorm.DB, entity interface{}) error {
-	exists := gormDB.Migrator().HasTable(entity)
+func CreateTable(tx *gorm.DB, entity interface{}) error {
+	exists := tx.Migrator().HasTable(entity)
 	if !exists {
-		if err := gormDB.Migrator().CreateTable(entity); err != nil {
+		if err := tx.Migrator().CreateTable(entity); err != nil {
 			return err
 		}
 	}
@@ -25,10 +25,10 @@ func CreateTable(gormDB *gorm.DB, entity interface{}) error {
 	return nil
 }
 
-func AddColumn(gormDB *gorm.DB, entity interface{}, column string) error {
-	exists := gormDB.Migrator().HasColumn(entity, column)
+func AddColumn(tx *gorm.DB, entity interface{}, column string) error {
+	exists := tx.Migrator().HasColumn(entity, column)
 	if !exists {
-		if err := gormDB.Migrator().AddColumn(entity, column); err != nil {
+		if err := tx.Migrator().AddColumn(entity, column); err != nil {
 			return err
 		}
 	}
@@ -36,10 +36,10 @@ func AddColumn(gormDB *gorm.DB, entity interface{}, column string) error {
 	return nil
 }
 
-func AlterColumn(gormDB *gorm.DB, entity interface{}, column string) error {
-	exists := gormDB.Migrator().HasColumn(entity, column)
+func AlterColumn(tx *gorm.DB, entity interface{}, column string) error {
+	exists := tx.Migrator().HasColumn(entity, column)
 	if exists {
-		if err := gormDB.Migrator().AlterColumn(entity, column); err != nil {
+		if err := tx.Migrator().AlterColumn(entity, column); err != nil {
 			return err
 		}
 	}
